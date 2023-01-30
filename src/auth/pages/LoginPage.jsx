@@ -1,5 +1,8 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { Link as RouterLink } from "react-router-dom";
+import { checkingAuthentication, startGoogleSignIn } from "../../store/auth/";
+import { useForm } from "../../hooks/useForm";
 import {
   Button,
   Divider,
@@ -19,6 +22,22 @@ import LockIcon from "@mui/icons-material/Lock";
 import GoogleIcon from "@mui/icons-material/Google";
 
 export const LoginPage = () => {
+  const dispatch = useDispatch();
+
+  const { email, password, formState, onInputChange } = useForm({
+    email: "name@mail.com",
+    password: "123456",
+  });
+
+  const onSubmit = (event) => {
+    event.preventDefault();
+
+    dispatch(checkingAuthentication(formState));
+  };
+  const onGoogleSignIn = () => {
+    dispatch(startGoogleSignIn(formState));
+  };
+
   return (
     <Stack
       direction="column"
@@ -30,11 +49,12 @@ export const LoginPage = () => {
         title="Welcome Back"
         description="Enter your credentials to access your account"
       >
-        <form>
+        <form onSubmit={onSubmit}>
           <Grid container mt={7}>
             <Grid item xs={12} sx={{ mb: 4 }}>
               <LoginTextField
                 type="email"
+                name="email"
                 placeholder="Enter your email address"
                 fullWidth
                 InputProps={{
@@ -44,12 +64,15 @@ export const LoginPage = () => {
                     </InputAdornment>
                   ),
                 }}
+                onChange={onInputChange}
+                value={email}
               />
             </Grid>
             <Grid item xs={12} sx={{ mb: 4 }}>
               <LoginTextField
                 placeholder="Enter your password"
                 type="password"
+                name="password"
                 fullWidth
                 autoComplete="off"
                 InputProps={{
@@ -59,6 +82,8 @@ export const LoginPage = () => {
                     </InputAdornment>
                   ),
                 }}
+                onChange={onInputChange}
+                value={password}
               />
             </Grid>
           </Grid>
@@ -66,6 +91,7 @@ export const LoginPage = () => {
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Button
+                type="submit"
                 variant="contained"
                 sx={{
                   height: "4rem",
@@ -86,6 +112,7 @@ export const LoginPage = () => {
             <Grid item xs={12}>
               <GoogleButton
                 variant="outlined"
+                onClick={onGoogleSignIn}
                 sx={{
                   height: "4rem",
                   borderRadius: ".75rem",
